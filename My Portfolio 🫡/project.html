@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="project.css">
+    <title>Document</title>
+</head>
+<body>
+    <pre>import time
+import random
+import copy
+
+def type_text(text, speed=0.05):
+        for letter in text:
+            print(letter, end ="", flush=True)
+            time.sleep(speed)
+        print()
+
+
+events = [
+    "Predator",
+    "Treasure Chest",
+    "Earthquake",
+    "Nothing",
+    "Hidden Passage",
+    "Trap" 
+]
+
+def Login():
+    name = input("Name?")
+    print("Hello" ,name, "what class would you like?")
+    print("1. Warrior")
+    print("2. Mage")
+    print("3. Archer")
+
+    character = input("")
+
+    if character == "1":
+        warrior = Warrior(name)
+        print(warrior)
+        print("Are you sure?")
+        number = input("Return or Select?")
+
+        if number.lower() == "return":
+            return Login()
+
+        elif number.lower() == "select":
+            print("Now youve gotta class! We will now redirect you back to the gameplay!")
+            return warrior
+            
+
+        else:
+            print("Please try again..")
+            return Login()
+
+    elif character == "2":
+        mage = Mage(name)
+        print(mage)
+        print("Are you sure?")
+
+        idk = input("Return or Select?")
+
+        if idk.lower() == "return":
+            return Login()
+
+        elif idk.lower() == "select":
+            print("Now youve gotta class! We will now redirect you back to the gameplay")
+            return mage
+
+        else:
+            print("Please try again..")
+            return Login()
+
+    elif character == "3":
+        archer = Archer(name)
+        print(archer)
+        print("Are you sure?")
+
+        what = input("Return or Select?")
+
+        if what.lower() == "return":
+            return Login()
+
+        elif what.lower() == "select":
+            print("Now youve gotta class! We will now redirect you back to the gameplay!")
+            return archer
+
+        else:
+            print("Please try again..")
+            return Login()
+
+    else:
+        print("Please try again..")
+        return Login()
+
+class Predator:
+    def __init__(self, name, health, attack, defense):
+        self.name = name
+        self.health = health
+        self.attack = attack
+        self.defense = defense
+
+wolf = Predator("Wolf", 50, 15, 5)
+dire_wolf = Predator("Dire Wolf", 70, 17, 8)
+bear = Predator("Bear", 100, 20, 10)
+cave_spider = Predator("Cave Spider", 35, 12, 3)
+
+predators = [wolf, bear, cave_spider, dire_wolf]
+
+class Trap:
+    def __init__(self, name, durability):
+        self.trap = name
+        self.durability = durability
+
+rope = Trap("Rope_Trap", 20) 
+bearTrap = Trap("Bear_Trap", 100) 
+pit = Trap("Pit_Trap", 0)  
+
+traps = [rope, bearTrap, pit]
+
+class Warrior:
+    def __init__(self,name):
+        self.name = name
+        self.health = 150
+        self.attack = 20
+        self.defense = 10
+        self.inventory = ["Sword" , "Shield" , "Armor"]
+        self.exp = 0
+        self.level = 0
+        self.money = 1000
+
+class Mage:
+    def __init__(self,name):
+        self.name = name
+        self.health = 100
+        self.attack = 20
+        self.defense = 5
+        self.inventory = ["Staff" , "HP Potion"]
+        self.exp = 0
+        self.level = 0
+        self.money = 2000
+
+class Archer:
+    def __init__(self,name):
+        self.name = name
+        self.health = 120
+        self.attack = 15
+        self.defense = 10
+        self.inventory = ["Bow" , "Arrows"]
+        self.exp = 0
+        self.level = 0
+        self.money = 3000
+
+def Inventory(player):
+    type_text("===== INVENTORY =====")
+
+    for item in player.inventory:
+        print("-", item)
+
+def ExitGame():
+    print("Sure?")
+    print("1.    Exit")
+    print("2.    Return")
+    print()
+    number = input("1 or 2: ")
+    if number == "1":
+        print("Thanks For Playing!")
+    elif number == "2":
+        MainMenu()
+
+def level_up(player):
+    print()
+    while player.exp >= 250:
+        player.level += 1
+        player.exp -= 250
+        print("You leveled up! 🫡")
+
+def Credits():
+    print("Made by ME")
+    print("Challenged by GPT")
+    print("Just a beginner...") 
+
+def Settings():
+    print("Graphics")
+    print("Shadows")
+    print("FPS")
+
+def Combat(player, enemy):
+    while True:
+            type_text("===== COMBAT MODE =====")
+            print(f"{player.name} vs {enemy.name}")
+            print()        
+            print(f"{player.name} HP: {player.health}")
+            print(f"{enemy.name} HP: {enemy.health}")
+            print()
+            print("1. Attack")
+            print("2. Inventory")
+            print("3. Defend")
+            print("4. Run")
+
+            choice = input("> ")
+
+            if choice == "1":
+                enemy.health -= player.attack
+                print(f"{enemy.name} took {player.attack} damage!")
+
+                print("Player Health:", player.health)
+                print("Enemy Health:", enemy.health)
+
+                if enemy.health <= 0:
+                    print("You defeated it!")
+                    player.exp += 100
+                    break
+
+                else:
+                    print(f"{enemy.name} Attacks!")
+                    player.health -= enemy.attack
+                    print(f"You took {enemy.attack} damage!")
+                    print()
+                    print("Player Health:", player.health)
+                    print("Enemy Health:", enemy.health)
+
+                    if player.health <= 0:
+                        type_text("You Died...")
+                        break
+
+                    
+
+
+                
+            elif choice =="2":
+                Inventory(player)
+            elif choice == "3":
+                if "Shield" in player.inventory:
+                    print("You raised your shield!")
+
+                    damage = enemy.attack // 2
+                    player.health -= damage
+
+                    print(f"You blocked some damage!")
+                    print(f"You took {damage} damage!")
+
+                    
+
+                    if player.health <= 0:
+                        type_text("You Died...")
+                        break
+
+
+                else:
+                    print("You dont have a Shield!")
+                    player.health -= enemy.attack
+
+                    if player.health <= 0:
+                        type_text("You Died...")
+                        break
+
+                
+
+            elif choice == "4":
+                print("You run away! and successfully escaped!")
+                break
+            else:
+                print("Invalid Choice!")
+
+def LoadGame(): 
+    pass
+
+def NewGame():
+    print("Alright lets get started shall we?")
+    player = Login()
+    StartGame(player)
+
+def StartGame(player):
+    while True:
+        print("====== GAME STARTED =====")
+
+        print("Welcome", player.name)
+        print("Health:", player.health)
+        print("Attack:", player.attack)
+        print("Defense:", player.defense)
+
+        print("Redirecting you to the World..")
+
+        print("Loading", end="")
+
+        for frame in [".", "..", "..." ,"...."]:
+            print(f"\rLoading{frame}", end ="")
+            time.sleep(0.3)
+
+        print("\n===== DUNGEON OF PYTHON =====")
+        print("1.    Explore")
+        print("2.    Check Stats")
+        print("3.    Check Inventory")
+        print("4.    Return to Menu")
+
+        _ = input("")
+
+        if _ == "1":
+            print("Where would you like to explore??")
+            print("1.    Cave")
+            print("2.    Abandoned Castle")
+            print("3.    Village")
+            print("4.    Rain Forest")
+
+            q = input("> ")
+
+            if q == "1":
+
+                type_text("==== CAVE ====")
+                print("*New location found!*")
+
+                event = random.choice(events)
+
+                if event == "Predator":
+                    type_text("You hear something breathing heavily nearby...")
+
+                    enemy = copy.copy(random.choice(predators))
+
+                    type_text(f"A, {enemy.name}, appeared!")
+
+                    print("Health:", enemy.health)
+                    print("Attack:", enemy.attack)
+                    print("Defense:", enemy.defense)
+
+                    print("Whats your first move?")
+                    print("1. Fight")
+                    print("2. Run")
+
+                    fah = input("> ")
+
+                    if fah == "1":
+                        Combat(player, enemy)
+
+                    elif fah == "2":
+                        print("You ran away!")
+
+                    else:
+                        print("Invalid Input.")
+
+                elif event == "Treasure Chest":
+                    player.money += 1000
+                    player.exp += 500
+                    print(f"Player received{player.money} and {player.exp}!")
+                    print("You can now Level Up!!")
+                    level_up(player)
+
+                elif event == "Earthquake":
+                    print()
+                    print("Take Cover NOW!")
+                    type_text("*You took cover behind a large rock keeping you safe*")
+                    type_text("*But you found nothing*")
+
+                elif event == "Nothing":
+                    type_text("*You found nothing..*")
+
+                elif event == "Hidden Passage":
+                    type_text("You found a hidden passage leading you underground..")
+                    type_text("*You went inside to check it out*")
+                    type_text("You found remains of an Unknown Creature!")
+                    player.exp += 1000
+                    print("You can also now Level UP!")
+                    level_up(player)
+
+                elif event == "Trap":
+                    print("You fell into a trap!")
+
+                    trap = random.choice(traps)
+
+                    type_text(f"You were caught in a {trap.name}!")
+
+                    print(f"Durability:{trap.durability}")
+                    if "Iron Sword" in player.inventory or "Bow" in player.inventory or "Staff" in player.inventory:
+                        type_text("You used your weapon to get out of the trap!")
+
+                        if trap == pit:
+                            type_text("You climbed yourself out!")
+
+                        elif trap == bearTrap:
+                            player.health -= 40
+
+            elif q == "2":
+                type_text("====== ABANDONED CASTLE =====")
+                print("*New location found!*")
+
+                event = random.choice(events)
+
+                if event == "Predator": 
+                    enemy = copy.copy(random.choice(predators))
+                    type_text(f"A, {enemy.name}, appeared!")
+
+                    print("===== ENEMY STATS =====")
+                    print("Health:", enemy.health)
+                    print("Attack:", enemy.attack)
+                    print("Defense:", enemy.defense)
+
+                    type_text("What will you do??")
+                    print("1.   Fight back")
+                    print("2.   Walk away slowly")
+
+                    choice = input("> ")
+
+                    if choice == "1":
+                        Combat(player, enemy)
+
+                    elif choice == "2":
+                        type_text("You succesfully escaped!")
+
+                elif event == "Treasure Chest":
+                    player.money += 1000
+                    player.exp += 500
+                    print(f"Player received{player.money} and {player.exp}!")
+                    print("You can now Level Up!!")
+                    level_up(player)
+
+                elif event == "Earthquake":
+                    type_text("TAKE COVER,,, NOW!")
+                    print("*But there was none to took cover too..*")
+                    print("1. GET OUT")
+                    print("2. FIND SHELTER INSIDE!")
+
+                    idk = input("> ")
+
+                    if idk == "1":
+                        type_text("You survived!")
+
+                    elif idk == "2":
+                        player.health -= 50
+                        if player.health <= 0:
+                            print("You died..")
+                        else:
+                            print("You were able to survive!")
+
+                elif event == "Nothing":
+                    print("You found nothing..")
+
+                elif event == "Hidden Passage":
+                    type_text("You found a staircase leading to an unknown room...")
+                    print("You found a treasure chest!")
+                    player.exp += 250
+                    level_up(player)
+
+
+            elif q == "3":
+                type_text("======= VILLAGE =======")
+                print("*New location found!*")
+                print()
+                
+                print()
+                event = random.choice(events)
+
+                if event == "Predator":
+                    enemy = copy.copy(random.choice(predators))
+                    print()
+                    type_text(f"A, {enemy.name}, appeared!")
+
+                    print("===== ENEMY STATS =====")
+                    print("Health:", enemy.health)
+                    print("Attack:", enemy.attack)
+                    print("Defense:", enemy.defense)
+
+                    type_text("What will you do??")
+                    print("1.   Fight back")
+                    print("2.   Walk away slowly")
+
+                    choice = input("> ")
+
+                    if choice == "1":
+                        Combat(player, enemy)
+
+                    elif choice == "2":
+                        type_text("You succesfully escaped!")
+
+                elif event == "Treasure Chest":
+                    player.money += 1000
+                    player.exp += 500
+                    print(f"Player received{player.money} and {player.exp}!")
+                    print("You can now Level Up!!")
+                    level_up(player)
+
+                elif event == "Earthquake":
+                    print("BRACE YOURSELF NOW")
+                    type_text("*You've braced yourself and survived!")
+
+                elif event == "Nothing":
+                    print("Though you found a fellow villager who would like to trade with you")
+                    type_text("1.   Accept??")
+                    type_text("2.   Decline.")
+
+                    _ = input("> ")
+
+                    if _ == "1":
+                        pass
+                    elif _ == "2":
+                        print("You declined.")
+            elif q == "4":
+                pass
+
+        elif _ == "2":
+            print("==== PLAYER STATS ====")
+            print("Name:", player.name)
+            print("Health:", player.health)
+            print("Attack:", player.attack)
+            print("Defense:", player.defense)
+
+        
+
+
+        elif _ == "3":
+            print("Inventory:", player.inventory)
+
+        elif _ == "4":
+            break
+
+        else: print("Invalid Choice!")
+
+def Trade():
+    type_text("===== TRADING ====")
+    print("1.    Wheat")
+    print("2.    ") #STILL THINKINGG
+
+def MainMenu():
+    while True:
+        print("=========================")
+        print("DUNGEON OF PYTHON")
+        print("=========================")
+        print("1.    New Game")
+        print("2.    Load Game")
+        print("3.    Settings")
+        print("4.    Credits")
+        print("5.    Exit")
+
+        choice = input("")
+
+        if choice == "1":
+            NewGame()
+
+        elif choice == "2":
+            print("Under construction..")
+
+        elif choice == "3":
+            Settings()
+
+        elif choice == "4":
+            Credits()
+
+        elif choice == "5":
+            print("Thanks for playing!")
+            break
+
+
+
+        else:
+            print("Invalid choice!")
+
+MainMenu()</pre>
+<hr>
+<p>By the way this is not finished still under contruction</p>
+</body>
+</html>
